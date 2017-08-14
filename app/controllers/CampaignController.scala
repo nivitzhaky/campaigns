@@ -49,15 +49,15 @@ class CampaignController extends Controller with Json4s {
     }
   }
 
-  def getAddsByCampaignCategory(category: String) = Action.async(json) { implicit request =>
-    Future {
-      val campaigns = memPersistance.filter(c => (c.category.equals(category)) && (c.startDate <= System.currentTimeMillis()))
-      val campaignsWithHighestBid = campaigns.map { c =>
-        val highestBid = c.ads.map(a => a.bid).max
-        CampaignWithHighestBid(c.name, c.startDate, c.category, highestBid)
-      }
-      Ok(Extraction.decompose(campaignsWithHighestBid))
+  def getAddsByCampaignCategory(category: String) = Action { implicit request =>
+
+    val campaigns = memPersistance.filter(c => (c.category.equals(category)) && (c.startDate <= System.currentTimeMillis()))
+    val campaignsWithHighestBid = campaigns.map { c =>
+      val highestBid = c.ads.map(a => a.bid).max
+      CampaignWithHighestBid(c.name, c.startDate, c.category, highestBid)
     }
+    Ok(Extraction.decompose(campaignsWithHighestBid))
+
   }
 
   def headers = List(
